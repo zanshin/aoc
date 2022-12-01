@@ -49,16 +49,9 @@ func maxCalories(data []string) (int, int) {
 			}
 		}
 	}
-	// fmt.Printf("Last elf: %d\n", sum)
-	elves = append(elves, sum)
 
-	// fmt.Printf("Elves: %v\n", elves)
+	elves = append(elves, sum)
 	one, two, three := topThree(elves)
-	// fmt.Printf("Most: %d\n", most)
-	// fmt.Printf("Top three: %d\n", one+two+three)
-	// fmt.Printf("One: %d\n", one)
-	// fmt.Printf("Two: %d\n", two)
-	// fmt.Printf("Three: %d\n", three)
 
 	return most, one + two + three
 }
@@ -68,8 +61,5 @@ func topThree(elves []int) (int, int, int) {
 		return elves[i] > elves[j]
 	})
 
-	// fmt.Printf("Sorted: %d\n", elves
-
 	return elves[0], elves[1], elves[2]
-
 }
