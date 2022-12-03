@@ -9,19 +9,25 @@ import (
 
 func main() {
 	fmt.Println("Day Three - Part One")
+	initPriorities()
 
 	fmt.Printf("Priority total: %d\n", rucksack(readData("input.txt")))
+	fmt.Printf("Badge total: %d\n", badges(readData("input.txt")))
 }
 
-func rucksack(data []string) int {
+var priorities = map[string]int{}
+
+func initPriorities() {
 	// a-z = 1 - 26, A-Z = 27 - 52
-	priorities := map[string]int{}
 	alphabet := "abcdefghijklmnopqrstuvwxyz"
 	for letter := range alphabet {
 		priorities[string(alphabet[letter])] = letter + 1
 		priorities[strings.ToUpper(string(alphabet[letter]))] = letter + 27
 	}
 
+}
+
+func rucksack(data []string) int {
 	total := 0
 	for item := range data {
 		half := len(data[item]) / 2
@@ -44,6 +50,48 @@ func rucksack(data []string) int {
 		}
 	}
 	return total
+}
+
+func badges(data []string) int {
+	// Need to read two lines (a and B) call intersection and get c'
+	// then read third line (c) and call intersetcion (c, c') to get answer
+	// convert answer to value and add to total
+	// repeat until end of file
+	total := 0
+	for x := 0; x < len(data); x = x + 3 {
+		// fmt.Printf("x: %d\n", x)
+		a := strings.Split(data[x], "")
+		b := strings.Split(data[x+1], "")
+		c := strings.Split(data[x+2], "")
+		// fmt.Printf("a: %s\n", a)
+		// fmt.Printf("b: %s\n", b)
+		// fmt.Printf("c: %s\n", c)
+
+		ab := intersection(a, b)
+		ans := intersection(ab, c)
+		// fmt.Printf("ab: %s, ans: %s\n", ab, ans[0])
+
+		if v, found := priorities[ans[0]]; found {
+			// fmt.Printf("Common element: %s - %d\n", strings.Join(ans, ""), v)
+			total = total + v
+		}
+	}
+	return total
+}
+
+func intersection(a, b []string) (c []string) {
+	m := make(map[string]bool)
+
+	for _, item := range a {
+		m[item] = true
+	}
+
+	for _, item := range b {
+		if _, ok := m[item]; ok {
+			c = append(c, item)
+		}
+	}
+	return
 }
 
 func readData(filename string) []string {
