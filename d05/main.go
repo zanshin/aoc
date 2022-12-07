@@ -67,11 +67,12 @@ var (
 func main() {
 	fmt.Println("AOC Day 5")
 
-	run("input.txt")
-	fmt.Printf("Top crates: %s\n", run("input.txt"))
+	crateMover9001 := true
+	// run("input.txt", crateMover9001)
+	fmt.Printf("Top crates: %s\n", run("input.txt", crateMover9001))
 }
 
-func run(filename string) string {
+func run(filename string, crateMover9001 bool) string {
 	data := readData(filename)
 	separator = findSeparator(data)
 	cargoBase = separator - 2
@@ -83,7 +84,7 @@ func run(filename string) string {
 	cargo = make([]Stack, numStacks)
 
 	initializeStacks(data)
-	organizeCrates(data)
+	organizeCrates(data, crateMover9001)
 	topCrates := ""
 	for c := 0; c < numStacks; c++ {
 		topCrates += string(cargo[c].Pop())
@@ -115,12 +116,12 @@ func cargoContents() {
 		cargo[x].Contents()
 	}
 }
-func organizeCrates(data []string) {
+func organizeCrates(data []string, crateMover9001 bool) {
 	fmt.Println("")
 	fmt.Println("organizeCrates")
 	fmt.Printf("line: %d, length: %d\n", moveStart, len(data))
 	for line := moveStart; line < len(data); line++ {
-		getMoves(data[line])
+		getMoves(data[line], crateMover9001)
 	}
 	fmt.Println("done with moves")
 }
@@ -147,7 +148,7 @@ func buildStacks(row string) {
 	}
 }
 
-func getMoves(row string) {
+func getMoves(row string, crateMover9001 bool) {
 	// move x from X to X
 	// first x can be 1 or 2 digits
 	// from and to will be 1 or 2 or 3
@@ -159,17 +160,27 @@ func getMoves(row string) {
 	f, _ := strconv.Atoi(re.ReplaceAllString(row, "${2}"))
 	t, _ := strconv.Atoi(re.ReplaceAllString(row, "${3}"))
 	// fmt.Printf("c, f, t: %d, %d, %d\n", c, f, t)
-	popPush(c, f, t)
+	popPush(c, f, t, crateMover9001)
 
 }
 
-func popPush(count, from, to int) {
-	fmt.Printf("count: %d, from: %d, to: %d\n", count, from, to)
+func popPush(count, from, to int, crateMover9001 bool) {
+	fmt.Printf("count: %d, from: %d, to: %d. CrateMover9001: %v\n", count, from, to, crateMover9001)
+	craneStack := make([]Stack, 1)
 	for x := 1; x <= count; x++ {
 		fmt.Printf("x: %d\n", x)
 		// fmt.Printf("crate: %q\n", cargo[from-1].Pop())
 		cargo[from-1].Peek()
-		cargo[to-1].Push(cargo[from-1].Pop())
+		if crateMover9001 {
+			craneStack[0].Push(cargo[from-1].Pop())
+		} else {
+			cargo[to-1].Push(cargo[from-1].Pop())
+		}
+	}
+	if crateMover9001 {
+		for craneStack[0].Len() > 0 {
+			cargo[to-1].Push(craneStack[0].Pop())
+		}
 	}
 	cargoContents()
 }
