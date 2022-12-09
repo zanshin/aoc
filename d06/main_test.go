@@ -6,21 +6,27 @@ import (
 
 func TestMain(t *testing.T) {
 	var tests = []struct {
-		input    string
-		expected int
+		input   string
+		packet  int
+		message int
 	}{
-		{"mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7},
-		{"bvwbjplbgvbhsrlpgdmjqwftvncz", 5},
-		{"nppdvjthqldpwncqszvftbrmjlhg", 6},
-		{"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10},
-		{"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11},
+		{"mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7, 19},
+		{"bvwbjplbgvbhsrlpgdmjqwftvncz", 5, 23},
+		{"nppdvjthqldpwncqszvftbrmjlhg", 6, 23},
+		{"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10, 29},
+		{"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11, 26},
 	}
 
 	for _, tt := range tests {
-		result := findMarker(tt.input)
+		result := findMarker(tt.input, 4)
 
-		if result != tt.expected {
-			t.Errorf("Wrong marker index. Expected %d, got %d\n", tt.expected, result)
+		if result != tt.packet {
+			t.Errorf("Wrong marker index. Expected %d, got %d\n", tt.packet, result)
+		}
+
+		messageStart := findMarker(tt.input, 14)
+		if messageStart != tt.message {
+			t.Errorf("Wrong message index. Expected %d, got %d\n", tt.message, messageStart)
 		}
 	}
 }
